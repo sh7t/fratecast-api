@@ -1,3 +1,3 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//# sourceMappingURL=current-conditions.type.js.map
+//# sourceMappingURL=localization.type.js.map

@@ -6,6 +6,7 @@ import {CurrentConditions} from '../common/types/current-conditions.type';
 import {LocationByKey} from '../common/types/location-by-key.type';
 import {LOCALE_NAMES, UserLocale} from "../common/enums/locale.enum";
 import {LOCALES_REGEXP} from "../common/regexps/locales.regexp";
+import {getLocalized} from "../locales";
 
 @Update()
 export class TelegramUpdate {
@@ -19,12 +20,13 @@ export class TelegramUpdate {
         const user = await this.userService.findOrSave(userId);
         const conditions: CurrentConditions = await this.weatherService.getCurrentConditions(user.locationKey, user.locale);
         const location: LocationByKey = await this.weatherService.getLocationByKey(user.locationKey);
+        const localization = getLocalized(user.locale);
 
         return (
-            `${await this.getEmojiByDayTime(conditions.IsDayTime)} Right now in <b>${location.LocalizedName}, ${location.Country.LocalizedName}</b>\n\n` +
-            `☀️ Weather: <b>${conditions.WeatherText}</b>\n` +
-            `🌡️ Temperature: <b>${conditions.Temperature.Metric.Value} °${conditions.Temperature.Metric.Unit}</b>\n` +
-            `☔ Precipations: <b>${conditions.HasPrecipitation ? 'Yes' : 'No'}.</b>`
+            `${await this.getEmojiByDayTime(conditions.IsDayTime)} ${localization.currentlyInLocation} <b>${location.LocalizedName}, ${location.Country.LocalizedName}</b>\n\n` +
+            `☀️ ${localization.weather}: <b>${conditions.WeatherText}</b>\n` +
+            `🌡️ ${localization.temperature}: <b>${conditions.Temperature.Metric.Value} °${conditions.Temperature.Metric.Unit}</b>\n` +
+            `☔ ${localization.precipitation}: <b>${conditions.HasPrecipitation ? localization.yes : localization.no}.</b>`
         );
     }
 
@@ -39,12 +41,14 @@ export class TelegramUpdate {
     }
 
     private async reloadCurrentConditionsMessage(ctx: Context) {
-        const msg = await this.getCurrentConditionsMessage(ctx.from!.id);
+        const user = await this.userService.findOrSave(ctx.from!.id);
+        const msg = await this.getCurrentConditionsMessage(user.userId);
+        const localization = getLocalized(user.locale);
         await ctx.editMessageText(msg, {
             parse_mode: 'HTML',
             ...Markup.inlineKeyboard([
-                [Markup.button.callback('🔄 Reload', 'reload')],
-                [Markup.button.callback('👤 Back to profile', 'profile')]
+                [Markup.button.callback(`🔄 ${localization.reload}`, 'reload')],
+                [Markup.button.callback(`👤 ${localization.backToProfile}`, 'profile')]
             ])
         });
     }
@@ -54,23 +58,24 @@ export class TelegramUpdate {
         const user = await this.userService.findOrSave(ctx.from!.id);
         const location = await this.weatherService.getLocationByKey(user.locationKey);
         const conditions: CurrentConditions = await this.weatherService.getCurrentConditions(user.locationKey, user.locale);
+        const localization = getLocalized(user.locale);
         const msg =
-            `👋 <b>Hello there, ${ctx.from!.first_name}!</b>\n\n` +
-            `<blockquote>🫂 Your FrateProfile</blockquote>` +
+            `👋 <b>${localization.greeting}, ${ctx.from!.first_name}!</b>\n\n` +
+            `<blockquote>🫂 ${localization.your} FrateProfile</blockquote>` +
             `FrateID: <b>№ <code>${user.id}</code></b>\n` +
-            `Language: <b>${LOCALE_NAMES[user.locale] ?? "Unknown language"}</b>\n` +
-            `Currently picked location: ${await this.countryCodeToFlag(location.Country.ID)} <b>${location.LocalizedName}, ${location.Country.LocalizedName}</b>`;
+            `${localization.language}: <b>${LOCALE_NAMES[user.locale] ?? "Unknown language"}</b>\n` +
+            `${localization.currentLocation}: ${await this.countryCodeToFlag(location.Country.ID)} <b>${location.LocalizedName}, ${location.Country.LocalizedName}</b>`;
 
         await ctx.reply(msg,
             {
                 parse_mode: 'HTML',
                 ...Markup.inlineKeyboard([
                     [
-                        Markup.button.callback(`${await this.countryCodeToFlag(user.locale.slice(-2))} Change language`, 'changeLanguage'),
-                        Markup.button.callback('📍 Change location', 'changeLocation')
+                        Markup.button.callback(`${await this.countryCodeToFlag(user.locale.slice(-2))} ${localization.changeLanguage}`, 'changeLanguage'),
+                        Markup.button.callback(`📍 ${localization.changeLocation}`, 'changeLocation')
                     ],
                     [
-                        Markup.button.callback(`${await this.getEmojiByDayTime(conditions.IsDayTime)} Currently in ${location.LocalizedName}`, 'current')
+                        Markup.button.callback(`${await this.getEmojiByDayTime(conditions.IsDayTime)} ${localization.currentlyInLocation} ${location.LocalizedName}`, 'current')
                     ]
                 ])
             }
@@ -97,10 +102,17 @@ export class TelegramUpdate {
 
     @Action('changeLanguage')
     async onChangeLanguage(@Ctx() ctx: Context) {
-        await ctx.editMessageText("Pick a new language:", {
+        const user = await this.userService.findOrSave(ctx.from!.id);
+        const localization = getLocalized(user.locale);
+
+        await ctx.editMessageText(
+            `${localization.currentLanguage} - <b>${LOCALE_NAMES[user.locale] ?? "Unknown language"}</b>\n` +
+            `${localization.pickNewOne}`,
+            {
             reply_markup: {
                 inline_keyboard: Object.entries(LOCALE_NAMES).map(([key, value]) => [Markup.button.callback(value, key)])
-            }
+            },
+            parse_mode: 'HTML'
         });
     }
 
@@ -126,11 +138,12 @@ export class TelegramUpdate {
         );
         const user = await this.userService.findOrSave(ctx.from!.id);
         const location = await this.weatherService.getLocationByKey(user.locationKey);
+        const localization = getLocalized(user.locale);
 
         await ctx.answerCbQuery();
         await ctx.editMessageText(
-            `Currently located in ${await this.countryCodeToFlag(location.Country.ID)} <b>${location.LocalizedName}, ${location.Country.LocalizedName}</b>.\n` +
-            `What's the new location you want to set?`,
+            `${localization.currentLocation} - ${await this.countryCodeToFlag(location.Country.ID)} <b>${location.LocalizedName}, ${location.Country.LocalizedName}</b>.\n` +
+            `${localization.whichNewLocation}?`,
             { parse_mode: 'HTML' }
         );
     }
@@ -138,6 +151,7 @@ export class TelegramUpdate {
     @On('text')
     async onText(@Ctx() ctx: Context) {
         const user = await this.userService.findOrSave(ctx.from!.id);
+        const localization = getLocalized(user.locale);
 
         if (user.waitingFor === 'location') {
             try {
@@ -147,7 +161,7 @@ export class TelegramUpdate {
                 await this.userService.setWaitingFor(user.userId, null);
                 await ctx.deleteMessage();
             } catch (e) {
-                await ctx.reply('Sadly, we don\'t have this location. Try again, please.');
+                await ctx.reply(`${localization.noLocation}. ${localization.tryAgain}.`);
             }
             await this.onStart(ctx);
         }
