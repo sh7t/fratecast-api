@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User, UserLocale } from './entities/user.entity';
+import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -19,5 +19,9 @@ export class UserService {
 
   async saveSettings(userId: number, settings: Partial<User>) {
     return await this.userRepository.update({ userId }, settings);
+  }
+
+  async setWaitingFor(userId: number, waitingFor: string | null) {
+    return await this.userRepository.update({ userId }, { waitingFor });
   }
 }
