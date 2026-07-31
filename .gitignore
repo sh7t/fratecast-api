@@ -10,4 +10,5 @@ yarn-error.log*
 
 .vscode/*
 .env
+.dist
 docker-compose.yml
