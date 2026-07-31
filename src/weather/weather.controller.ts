@@ -15,8 +15,9 @@ export class WeatherController {
   @ApiQuery({ name: 'isDetailed', required: false })
   async getCurrentConditions(
     @Query('key') key: string,
+    @Query('language') language?: string,
     @Query('isDetailed') isDetailed?: boolean,
   ) {
-    return await this.weatherService.getCurrentConditions(+key, isDetailed);
+    return await this.weatherService.getCurrentConditions(+key, language, isDetailed);
   }
 }
