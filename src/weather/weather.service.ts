@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
+import {UserService} from "../user/user.service";
 
 @Injectable()
 export class WeatherService {
@@ -33,10 +34,10 @@ export class WeatherService {
     return data ? data.Key : null;
   }
 
-  async getCurrentConditions(key: number, isDetailed?: boolean) {
+  async getCurrentConditions(key: number, language?: string, isDetailed?: boolean) {
     const url = `currentconditions/v1/${key}`;
     return await this.fetchWeatherData(url, {
-      language: 'en-us',
+      language: language ?? 'en-us',
       details: isDetailed,
     });
   }
