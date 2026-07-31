@@ -5,26 +5,24 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-
-export enum UserLocale {
-  en = 'en-us',
-  uk = 'uk-ua',
-  ru = 'ru-ua',
-}
+import {UserLocale} from "../../common/enums/locale.enum";
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column({ unique: true, type: 'bigint' })
   userId: number;
 
-  @Column({ nullable: true })
+  @Column({ default: 347629 })
   locationKey: number;
 
-  @Column({ type: 'enum', enum: UserLocale, default: UserLocale.en })
+  @Column({ type: 'enum', enum: UserLocale, default: UserLocale.EN })
   locale: UserLocale;
+
+  @Column({ type: 'varchar', nullable: true, default: null })
+  waitingFor: string | null;
 
   @CreateDateColumn()
   createdAt: Date;
