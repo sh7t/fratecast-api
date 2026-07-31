@@ -1,0 +1,25 @@
+import {Localization} from "../common/types/localization.type";
+
+export const en_us: Localization = {
+    greeting: 'Hello there',
+    your: 'Your',
+    language: 'Language',
+    currentLocation: 'Current location',
+    currentLanguage: 'Current language',
+    changeLanguage: 'Change language',
+    changeLocation: 'Change location',
+    changeToLocation: 'Change location to',
+    currentlyInLocation: 'Right now in',
+    pickNewOne: 'Pick a new one',
+    whichNewLocation: 'Which new location would you like to set?',
+    noLocation: 'Unfortunately, we couldn\'t find a location you were looking for',
+    tryAgain: 'Try again, please',
+    weather: 'Weather',
+    temperature: 'Temperature',
+    precipitation: 'Precipitation',
+    yes: 'Yes',
+    no: 'No',
+    reload: 'Reload',
+    backToProfile: 'Back to profile',
+    unknownLanguage: 'Unknown language',
+};

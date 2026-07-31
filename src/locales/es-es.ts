@@ -1,0 +1,25 @@
+import { Localization } from "../common/types/localization.type";
+
+export const es_es: Localization = {
+    greeting: 'Hola',
+    your: 'Tu',
+    language: 'Idioma',
+    currentLocation: 'Ubicación actual',
+    currentLanguage: 'Idioma actual',
+    changeLanguage: 'Cambiar idioma',
+    changeLocation: 'Cambiar ubicación',
+    changeToLocation: 'Cambiar ubicación a',
+    currentlyInLocation: 'Ahora mismo en',
+    pickNewOne: 'Elige una nueva',
+    whichNewLocation: '¿Qué nueva ubicación te gustaría establecer',
+    noLocation: 'Lamentablemente, no hemos podido encontrar la ubicación que buscabas',
+    tryAgain: 'Inténtalo de nuevo, por favor',
+    weather: 'Clima',
+    temperature: 'Temperatura',
+    precipitation: 'Precipitaciones',
+    yes: 'Sí',
+    no: 'No',
+    reload: 'Actualizar',
+    backToProfile: 'Volver al perfil',
+    unknownLanguage: 'Idioma desconocido',
+};
