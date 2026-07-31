@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { WeatherModule } from './weather/weather.module';
+import { WeatherModule } from './modules/weather/weather.module';
 import { ConfigModule } from '@nestjs/config';
-import { TelegramModule } from './telegram/telegram.module';
+import { TelegramModule } from './modules/telegram/telegram.module';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from './user/user.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [

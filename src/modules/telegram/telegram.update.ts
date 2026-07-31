@@ -2,11 +2,11 @@ import {Action, Command, Ctx, On, Start, Update} from 'nestjs-telegraf';
 import {Context, Markup} from 'telegraf';
 import {UserService} from '../user/user.service';
 import {WeatherService} from '../weather/weather.service';
-import {CurrentConditions} from '../common/types/current-conditions.type';
-import {LocationByKey} from '../common/types/location-by-key.type';
-import {LOCALE_NAMES, UserLocale} from "../common/enums/locale.enum";
-import {LOCALES_REGEXP} from "../common/regexps/locales.regexp";
-import {getLocalized} from "../locales";
+import {CurrentConditions} from '../../common/types/current-conditions.type';
+import {LocationByKey} from '../../common/types/location-by-key.type';
+import {LOCALE_NAMES, UserLocale} from "../../common/enums/locale.enum";
+import {LOCALES_REGEXP} from "../../common/regexps/locales.regexp";
+import {getLocalized} from "../../locales";
 
 @Update()
 export class TelegramUpdate {

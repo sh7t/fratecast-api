@@ -5,7 +5,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import {UserLocale} from "../../common/enums/locale.enum";
+import {UserLocale} from "../../../common/enums/locale.enum";
 
 @Entity('users')
 export class User {
